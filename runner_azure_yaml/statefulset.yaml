@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: runner-azure
+  namespace: runner-azure
+spec:
+  selector:
+    matchLabels:
+      app: runner-azure
+  replicas: 1
+  minReadySeconds: 10
+  template:
+    metadata:
+      labels:
+        app: runner-azure
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: runner-azure
+        image: angelapoliana/devops-runner:1.0.2
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: runner-azure-data
+          mountPath: /home/build/.local/share/containers
+        env:
+        - name: AZURE_DEVOPS_URL
+          valueFrom:
+            secretKeyRef:
+              name: runner-azure-secret
+              key: AZURE_DEVOPS_UR
+        - name: AGENT_POOL
+          valueFrom:
+            secretKeyRef:
+              name: runner-azure-secret
+              key: AGENT_POOL
+        - name: PAT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: runner-azure-secret
+              key: PAT_TOKEN
+        command: ["/bin/sh", "-c"]
+        args: ["/home/build/config.sh --unattended --url \"$AZURE_DEVOPS_URL\" --token \"$PAT_TOKEN\" --pool \"$AGENT_POOL\" --agent k8s --replace --work  work --acceptTeeEula && /home/build/run.sh"]
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+          limits:
+            cpu: "2000m"
+            memory: "2Gi"
+  volumeClaimTemplates:
+  - metadata:
+      name: runner-azure-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: standard
+      resources:
+        requests:
+          storage: 10Gi
