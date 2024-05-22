@@ -31,7 +31,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
-          context: Dockerfile
-          file:  Dockerfile/Dockerfile
+          context: ./Dockerfile
+          file: ./Dockerfile/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/runner-azure:${{ github.event.inputs.docker_image_tag }}
