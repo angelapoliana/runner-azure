@@ -3,11 +3,14 @@ name: Build Docker Image
 on:
   push:
     paths:
-      - 'src/**' # Monitor changes in the src directory
+      - 'Dockerfile/Dockerfile' # Monitor changes in the src directory
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    env:
+      IMAGE_VERSION: 0.0.1
 
     steps:
       - name: Checkout repository
@@ -25,6 +28,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/my-image:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/runner-azure:${{ env.NEW_VERSION }}
