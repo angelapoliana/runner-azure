@@ -1,9 +1,12 @@
 name: Build Docker Image
 
 on:
-  push:
-    paths:
-      - 'Dockerfile/Dockerfile' # Monitor changes in the src directory
+  workflow_dispatch:
+    inputs:
+      docker_image_tag:
+        description: 'Tag for the Docker image'
+        required: true
+        default: '0.0.1'
 
 jobs:
   build:
@@ -29,5 +32,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: Dockerfile
+          file:  Dockerfile/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/runner-azure:${{ env.NEW_VERSION }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/runner-azure:${{ github.event.inputs.docker_image_tag }}
