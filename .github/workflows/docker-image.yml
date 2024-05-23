@@ -1,7 +1,5 @@
-#NAME
 name: Build and Push Imagens to Dockerhub
 
-#EVENT
 on:
   push:
     tags:
