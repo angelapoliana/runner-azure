@@ -1,3 +1,5 @@
+#teste
+
 FROM quay.io/buildah/stable:v1
 
 RUN touch /etc/subgid /etc/subuid \
