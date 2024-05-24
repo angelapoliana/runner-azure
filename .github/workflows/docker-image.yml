@@ -1,12 +1,20 @@
 name: Build And Push Images to Dockerhub
+
 on:
   push:
     tags:
       - 'v*'
+
 jobs:
   build_docker_images:
-    name: Build Docker Image To Dockerhub
-    runs-on: [ubuntu-latest]
+    name: Build Docker Images To Dockerhub
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dockerfile: 
+          - runner
+          - teste
+          
     steps:
       - name: Code Checkout
         uses: actions/checkout@v3
@@ -16,7 +24,7 @@ jobs:
         id: meta
         with:
           images: |
-            ${{secrets.DOCKERHUB_USERNAME}}/${{secrets.DH_REPO_NAME}}
+            ${{secrets.DOCKERHUB_USERNAME}}/${{ matrix.dockerfile }}
           tags: |
             type=semver,pattern={{version}}
 
@@ -30,7 +38,7 @@ jobs:
       - name: Build And Push
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./Dockerfile/Dockerfile
+          context: ./${{ matrix.dockerfile }}
+          file: ./${{ matrix.dockerfile }}/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
