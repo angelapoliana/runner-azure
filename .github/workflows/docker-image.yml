@@ -1,5 +1,3 @@
-#NAME
-
 name: Build And Push Images to Dockerhub
 
 on:
